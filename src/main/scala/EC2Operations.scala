@@ -39,7 +39,6 @@ trait EC2StateQuery extends AWSClient {
 		ret.toList
 	}
 
-	def testString: String = return "Test String"
 
 	def describeAccountAttributes: String = c.describeAccountAttributes().toString()
 
