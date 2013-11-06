@@ -1,9 +1,12 @@
-package underway.providers.ec2.models
+package underway.providers.ec2
 
 import com.amazonaws.services.ec2.model.{InstanceBlockDeviceMapping, 
 	IamInstanceProfile, InstanceNetworkInterface, ProductCode, InstanceLicense, 
-	InstanceLicenseSpecification, InstanceNetworkInterfaceSpecification, Monitoring, Placement}
+	InstanceLicenseSpecification, InstanceNetworkInterfaceSpecification, Monitoring, Placement, GroupIdentifier}
+import com.amazonaws.services.ec2.model.{Instance => JInstance, Reservation => JReservation}
 import underway.implicits.OptionalParams._
+import scala.language.implicitConversions
+import scala.collection.JavaConversions._
 
 
 object models {
@@ -30,6 +33,17 @@ case class Instance(val AmiLaunchIndex: Integer,
 					val PrivateDnsName: String,
 					val PrivateIpAddress: String,
 					val ProductCodes: List[ProductCode])
+
+implicit class Reservation(jR: JReservation) {
+	val GroupNames: List[String] = jR.getGroupNames().toList
+	val Groups: List[GroupIdentifier] = jR.getGroups().toList
+	val Instances: List[JInstance] = jR.getInstances().toList
+
+	override def toString: String = s"GroupNames: ${GroupNames mkString ", "}\nGroups:     ${Groups mkString ", "}\nInstances:  ${Instances mkString ", "}"
+}
+
+
+
 
 case class BaseRunRequest(val ImageId: String,
                           val InstanceType: String,
@@ -64,7 +78,13 @@ case class MachineDefFromFile(val ImageId: String,
 	                          val Placement: String,
 	                          val SecurityDefs: List[String],
 	                          val UserData: String = "")
+}
 
+object conversions {
+	import underway.providers.ec2.models._
 
+	//private def listConverter[A,B](that: List[A])(f: A=>B): List[B] = that map f
 
+	implicit def List2List(that: List[JReservation]): List[Reservation] = that map Reservation
+	//implicit def List2List[A,B](that: List[A]): List[B] = listConverter(that)(B)
 }

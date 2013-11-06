@@ -6,6 +6,7 @@ import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.ec2.AmazonEC2Client
 import com.amazonaws.AmazonServiceException
+import scala.language.implicitConversions
 
 case class UnderwayServerException(msg: String) extends Exception {
 	override def toString = "Error: " + msg
@@ -24,10 +25,18 @@ trait EC2StateQuery extends AWSClient {
 		return instData.toList
 	}
 
+
+	import underway.providers.ec2.models.Reservation
 	def instanceDescriptions: List[String] = {
-		val res = c.describeInstances().getReservations()
+		import underway.providers.ec2.conversions._
+
+		val res: List[Reservation] = c.describeInstances().getReservations().toList
+		val res1: Reservation = res(0)
+		println("res1: " + res1.GroupNames.mkString(", "))
+
 		println("Reservations: " + res.length.toString)
-		val ret = for (inst1 <- res) yield inst1.toString()
+		//val ret = for (inst1 <- res) yield inst1.toString()
+		val ret = res map {x  => x.toString()}
 		ret.toList
 	}
 
