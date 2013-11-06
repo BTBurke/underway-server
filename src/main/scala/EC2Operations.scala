@@ -35,7 +35,6 @@ trait EC2StateQuery extends AWSClient {
 		println("res1: " + res1.GroupNames.mkString(", "))
 
 		println("Reservations: " + res.length.toString)
-		//val ret = for (inst1 <- res) yield inst1.toString()
 		val ret = res map {x  => x.toString()}
 		ret.toList
 	}
