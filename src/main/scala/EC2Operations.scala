@@ -31,12 +31,12 @@ trait EC2StateQuery extends AWSClient {
 		import underway.providers.ec2.conversions._
 
 		val res: List[Reservation] = c.describeInstances().getReservations().toList
-		val res1: Reservation = res(0)
-		println("res1: " + res1.GroupNames.mkString(", "))
+		//val res1: Reservation = res(0)
+		//println("res1: " + res1.instances(0).getIamInstanceProfile().toString())
 
 		println("Reservations: " + res.length.toString)
-		val ret = res map {x  => x.toString()}
-		ret.toList
+		res map {x  => x.toString()}
+		//ret.toList
 	}
 
 
