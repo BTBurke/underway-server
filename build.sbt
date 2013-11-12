@@ -4,15 +4,15 @@ organization := "underway"
 
 version := "0.1.0-SNAPSHOT"
 
-homepage := Some(url("https://github.com/BTBurke/underway-core"))
+homepage := Some(url("https://github.com/BTBurke/underway-server"))
 
 startYear := Some(2013)
 
 scmInfo := Some(
   ScmInfo(
     url("https://github.com/BTBurke/underway-core"),
-    "scm:git:https://github.com/BTBurke/underway-core.git",
-    Some("scm:git:git@github.com:BTBurke/underway-core.git")
+    "scm:git:https://github.com/BTBurke/underway-server.git",
+    Some("scm:git:git@github.com:BTBurke/underway-server.git")
   )
 )
 

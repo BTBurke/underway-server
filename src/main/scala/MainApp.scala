@@ -1,10 +1,11 @@
 package underway.core
 
-import scalaz._, Scalaz._
+//import scalaz._, Scalaz._
 import argonaut._, Argonaut._
 import underway.core.topology._
 import underway.core.validators._
 import underway.providers.ec2.AWSConnection
+import scala.util.{Success, Failure}
 
 
 
@@ -33,8 +34,13 @@ object CoreApp extends App {
 
 		val conn = AWSConnection("AKIAJ27NCGA4HJV4YDTA", "dnUxDb7DKy+TXdEjByo6caj45Or2wNbZ7+U+6Tmx")
 	
-		val testAWS = conn.instanceDescriptions
-		println("AWS: " + testAWS.mkString("\n"))
+		//val testAWS = conn.getInstancesFiltered({x => x.instanceId == "i-3e705c50"})
+		val testAWS = conn.getAvailabilityZones
+		testAWS match {
+			case Success(s) => if (s.length > 0) println(s mkString("\n")) else println("Nothing found.")
+			case Failure(ex) => println("Failed with error ${ex.msg}")
+		}
+		//println("AWS: " + testAWS.mkString("\n"))
 
 		} 
 	catch {

@@ -17,7 +17,10 @@ import com.amazonaws.services.ec2.model.{
  	Monitoring => JMonitoring,
  	StateReason => JStateReason,
  	InstanceState => JInstanceState,
- 	InstanceLicense => JInstanceLicense}
+ 	InstanceLicense => JInstanceLicense,
+ 	KeyPairInfo => JKeyPairInfo,
+ 	Address => JAddress,
+ 	AvailabilityZone => JAvailabilityZone}
 import underway.implicits.OptionalParams._
 import scala.language.implicitConversions
 import scala.collection.JavaConversions._
@@ -212,6 +215,33 @@ implicit class GroupIdentifier(jGI: JGroupIdentifier) {
 	def equals(that: GroupIdentifier): Boolean = if (this.groupId == that.groupId && this.groupName == that.groupName) true else false
 }
 
+implicit class KeyPair(jKP: JKeyPairInfo) {
+	val keyFingerprint: String = jKP.getKeyFingerprint()
+	val keyName: String = jKP.getKeyName()
+
+	override def toString: String = s"{KeyName: $keyName, KeyFingerprint: $keyFingerprint}"
+}
+
+implicit class Address(jA: JAddress) {
+	val allocationId: String = jA.getAllocationId()
+	val associationId: String = jA.getAssociationId()
+	val domain: String = jA.getDomain()
+	val instanceId: String = jA.getInstanceId()
+	val networkInterfaceId: String = jA.getNetworkInterfaceId()
+	val networkInterfaceOwnerId: String = jA.getNetworkInterfaceOwnerId()
+	val privateIpAddress: String = jA.getPrivateIpAddress()
+	val publicIp: String = jA.getPublicIp()
+
+	override def toString = jA.toString
+}
+
+implicit class AvailabilityZone(jAZ: JAvailabilityZone) {
+	val regionName: String = jAZ.getRegionName()
+	val state: String = jAZ.getState()
+	val zoneName: String = jAZ.getZoneName()
+
+	override def toString = jAZ.toString
+}
 
 case class BaseRunRequest(val imageId: String,
                           val instanceType: String,
@@ -258,6 +288,9 @@ object conversions {
 	implicit def List2ListPC(that: List[JProductCode]): List[ProductCode] = that map ProductCode
 	implicit def List2ListTag(that: List[JTag]): List[Tag] = that map Tag
 	implicit def List2ListInst(that: List[JInstance]): List[Instance] = that map Instance
+	implicit def List2ListKeyPair(that: List[JKeyPairInfo]): List[KeyPair] = that map KeyPair
+	implicit def List2ListAdd(that: List[JAddress]): List[Address] = that map Address
+	implicit def List2ListAZ(that: List[JAvailabilityZone]): List[AvailabilityZone] = that map AvailabilityZone
 
 
 }
