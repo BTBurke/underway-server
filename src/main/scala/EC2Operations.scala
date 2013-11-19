@@ -47,7 +47,8 @@ trait EC2StateQuery extends AWSClient {
 	def getAddresses: Try[List[Address]] = Try(c.describeAddresses()) map { _.getAddresses().toList }
 
 	def getAvailabilityZones: Try[List[AvailabilityZone]] = Try(c.describeAvailabilityZones()) map { _.getAvailabilityZones().toList }
-	
+
+	def getImages: Try[List[Image]] = Try(c.describeImages()) map { _.getImages().toList }	
 
 }
 

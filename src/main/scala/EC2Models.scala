@@ -20,7 +20,9 @@ import com.amazonaws.services.ec2.model.{
  	InstanceLicense => JInstanceLicense,
  	KeyPairInfo => JKeyPairInfo,
  	Address => JAddress,
- 	AvailabilityZone => JAvailabilityZone}
+ 	AvailabilityZone => JAvailabilityZone,
+ 	Image => JImage,
+ 	BlockDeviceMapping => JBlockDeviceMapping}
 import underway.implicits.OptionalParams._
 import scala.language.implicitConversions
 import scala.collection.JavaConversions._
@@ -33,7 +35,7 @@ import underway.providers.ec2.conversions._
 implicit class Instance(jI: JInstance) {
 	val amiLaunchIndex: Integer = jI.getAmiLaunchIndex()
 	val architecture: String = jI.getArchitecture()
-	val blockDeviceMappings: List[BlockDeviceMapping] = jI.getBlockDeviceMappings().toList
+	val blockDeviceMappings: List[InstanceBlockDeviceMapping] = jI.getBlockDeviceMappings().toList
 	val clientToken: String = jI.getClientToken()
 	val ebsOptimized: Boolean = jI.getEbsOptimized()
 	val hypervisor: String = jI.getHypervisor()
@@ -162,11 +164,11 @@ implicit class NetworkInterfaceAttachment(jNIAt: JInstanceNetworkInterfaceAttach
 	override def toString: String = jNIAt.toString
 }
 
-implicit class BlockDeviceMapping(jBDM: JInstanceBlockDeviceMapping) {
+implicit class InstanceBlockDeviceMapping(jBDM: JInstanceBlockDeviceMapping) {
 	val deviceName: String = jBDM.getDeviceName()
 	val ebs: EbsInstanceBlockDevice = jBDM.getEbs()
 
-	def equals(that: BlockDeviceMapping): Boolean = if (Tuple2(this.deviceName,this.ebs)==Tuple2(that.deviceName,that.ebs)) true else false
+	def equals(that: InstanceBlockDeviceMapping): Boolean = if (Tuple2(this.deviceName,this.ebs)==Tuple2(that.deviceName,that.ebs)) true else false
 	override def toString: String = jBDM.toString
 
 }
@@ -243,6 +245,39 @@ implicit class AvailabilityZone(jAZ: JAvailabilityZone) {
 	override def toString = jAZ.toString
 }
 
+
+implicit class Image(jI: JImage) {
+	val architecture: String = jI.getArchitecture()
+	val blockDeviceMappings: List[BlockDeviceMapping] = jI.getBlockDeviceMappings().toList
+	val description: String = jI.getDescription()
+	val hypervisor: String = jI.getHypervisor()
+	val imageId: String = jI.getImageId()
+	val imageLocation: String = jI.getImageLocation()
+	val imageOwnerAlias: String = jI.getImageOwnerAlias()
+	val imageType: String = jI.getImageType()
+	val kernelId: String = jI.getKernelId()
+	val name: String = jI.getName()
+	val ownerId: String = jI.getOwnerId()
+	val platform: String = jI.getPlatform()
+	val productCodes: List[ProductCode] = jI.getProductCodes().toList
+	val public: Boolean = jI.getPublic()
+	val ramdiskId: String = jI.getRamdiskId()
+	val rootDeviceName: String = jI.getRootDeviceName()
+	val rootDeviceType: String = jI.getRootDeviceType()
+	val state: String = jI.getState()
+	val stateReason: StateReason = jI.getStateReason()
+	val tags: List[Tag] = jI.getTags().toList
+	val virtualizationType: String = jI.getVirtualizationType()
+
+	override def toString = jI.toString
+
+}
+
+// TODO: Need an implicit class wrapper for BlockDeviceMapping. This is just a stub.  Needs other fields.
+implicit class BlockDeviceMapping(jBDM: JBlockDeviceMapping) {
+	val deviceName: String = jBDM.getDeviceName()
+}
+
 case class BaseRunRequest(val imageId: String,
                           val instanceType: String,
                           val keyName: String,
@@ -256,7 +291,7 @@ case class BaseRunRequest(val imageId: String,
                           val ebsOptimized: Boolean = false,
                           val instanceInitiatedShutdownBehavior: String = "terminate")
 
-case class ExtendedRunRequest(val blockDeviceMappings: Option[List[BlockDeviceMapping]] = None,
+case class ExtendedRunRequest(val blockDeviceMappings: Option[List[InstanceBlockDeviceMapping]] = None,
 	                          val clientToken: Option[String] = None,
 	                          val iamInstanceProfile: Option[JIamInstanceProfile] = None,
 	                          val kernelId: Option[String] = None,
@@ -284,13 +319,14 @@ object conversions {
 	implicit def List2ListRes(that: List[JReservation]): List[Reservation] = that map Reservation
 	implicit def List2ListGI(that: List[JGroupIdentifier]): List[GroupIdentifier] = that map GroupIdentifier
 	implicit def List2ListNetIface(that: List[JInstanceNetworkInterface]): List[NetworkInterface] = that map NetworkInterface
-	implicit def List2ListBDM(that: List[JInstanceBlockDeviceMapping]): List[BlockDeviceMapping] = that map BlockDeviceMapping
+	implicit def List2ListIBDM(that: List[JInstanceBlockDeviceMapping]): List[InstanceBlockDeviceMapping] = that map InstanceBlockDeviceMapping
 	implicit def List2ListPC(that: List[JProductCode]): List[ProductCode] = that map ProductCode
 	implicit def List2ListTag(that: List[JTag]): List[Tag] = that map Tag
 	implicit def List2ListInst(that: List[JInstance]): List[Instance] = that map Instance
 	implicit def List2ListKeyPair(that: List[JKeyPairInfo]): List[KeyPair] = that map KeyPair
 	implicit def List2ListAdd(that: List[JAddress]): List[Address] = that map Address
 	implicit def List2ListAZ(that: List[JAvailabilityZone]): List[AvailabilityZone] = that map AvailabilityZone
-
+	implicit def List2ListImage(that: List[JImage]): List[Image] = that map Image
+	implicit def List2ListBDM(that: List[JBlockDeviceMapping]): List[BlockDeviceMapping] = that map BlockDeviceMapping
 
 }

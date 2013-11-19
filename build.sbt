@@ -50,7 +50,7 @@ scalacOptions <++= scalaVersion map { sv =>
     ,"-feature"
     ,"-language:postfixOps"
     // "-language:reflectiveCalls",
-    // "-language:implicitConversions"
+    ,"-language:implicitConversions"
     // "-language:higherKinds",
     // "-language:existentials",
     // "-language:experimental.macros",
@@ -81,6 +81,7 @@ libraryDependencies ++= Seq (
   // -- Libraries --
   ,"io.argonaut" %% "argonaut" % "6.0-RC3"
   ,"com.amazonaws" % "aws-java-sdk" % "1.5.3"
+  ,"org.yaml" % "snakeyaml" % "1.13"
 )
 
 /* you may need these repos */
